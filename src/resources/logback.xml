@@ -17,7 +17,7 @@
             <charset>utf-8</charset>
         </encoder>
         <!--日志输出路径-->
-        <file>D:/Software/IDEA/Log/mark-data.log</file>
+        <file>D:/Software/IDEA/Log/mark-data2.log</file>
         <!--指定日志文件拆分和压缩规则-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--通过指定压缩文件名称，来确定分割文件方式-->
@@ -35,7 +35,7 @@
       -->
     <root level="ALL">
         <!--关联打印位置，不关联的话该位置将不会记录日志-->
-        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
         <appender-ref ref="FILE"/>
     </root>
 </configuration>

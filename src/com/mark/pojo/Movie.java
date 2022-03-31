@@ -14,10 +14,9 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(String name, String actor, double score, double time, double price, int number, Date startTime) {
+    public Movie(String name, String actor, double time, double price, int number, Date startTime) {
         this.name = name;
         this.actor = actor;
-        this.score = score;
         this.time = time;
         this.price = price;
         this.number = number;

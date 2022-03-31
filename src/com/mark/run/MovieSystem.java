@@ -4,7 +4,11 @@ import com.mark.pojo.Business;
 import com.mark.pojo.Customer;
 import com.mark.pojo.Movie;
 import com.mark.pojo.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MovieSystem {
@@ -23,6 +27,12 @@ public class MovieSystem {
 
     //定义一个静态的User类型的变量记住当前登录成功的用户对象
     public static User loginUser;
+
+    //自定义一个日期格式化的格式
+    public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    //创建一个日志对象
+    public static final Logger LOGGER = LoggerFactory.getLogger("MovieSystem.class");
 
     /**
      * 准备一些测试数据
@@ -122,6 +132,7 @@ public class MovieSystem {
                 //用户对象存在，比对密码是否正确
                 if(user.getPassWord().equals(password)){
                     loginUser = user;//记住登录的用户
+                    LOGGER.info(loginUser.getLoginName()+"登录成功");
                     //密码正确,登录成功
                     //判断登录的对象是用户还是商家
                     if(user instanceof Customer){
@@ -161,9 +172,11 @@ public class MovieSystem {
             switch (command){
                 case "1":
                     // 展示全部排片信息
+                    showBusinessInfos();
                     break;
                 case "2":
                     // 上架电影信息
+                    addMovie();
                     break;
                 case "3":
                     // 下架电影信息
@@ -179,6 +192,63 @@ public class MovieSystem {
                     break;
             }
         }
+    }
+
+    /**
+     * 商家上架电影
+     */
+    private static void addMovie() {
+        Business business = (Business) loginUser;
+        List<Movie> movies = ALL_MOVIES.get(business);
+        System.out.println("请您输入电影名:");
+        String name = SYS_SC.nextLine();
+        System.out.println("请您输入主演:");
+        String actor = SYS_SC.nextLine();
+        System.out.println("请您输入时长:");
+        String time = SYS_SC.nextLine();
+        System.out.println("请您输入票价:");
+        String price = SYS_SC.nextLine();
+        System.out.println("请您输入票数:");
+        String totalNumber = SYS_SC.nextLine();
+        while (true) {
+            try {
+            System.out.println("请您输入影片放映时间:");
+            String startTime = SYS_SC.nextLine();
+                Movie movie = new Movie(name, actor, Double.valueOf(time), Double.valueOf(price), Integer.valueOf(totalNumber), sdf.parse(startTime));
+                movies.add(movie);
+                System.out.println("《"+movie.getName()+"》"+"已成功上架");
+                return;//退出方法
+            } catch (ParseException e) {
+                e.printStackTrace();
+                LOGGER.error("时间解析出错");
+                System.out.println("请重新输入影片放映时间");
+            }
+        }
+
+    }
+
+    /**
+     * 展示商家的详细信息(当前登录的商家)
+     */
+    private static void showBusinessInfos() {
+        System.out.println("==================商家详情界面=================");
+        LOGGER.info(loginUser.getLoginName()+"商家正在查看详情");
+        //根据商家对象(loginUser就是登录的用户)，作为Map集合的键，提取对应的值就是排片信息：Map<Business,List<Movie>> ALL_MOVIES
+        Business business = (Business) loginUser;
+        System.out.println(business.getShopName() + "\t\t电话" +business.getPhone() + "\t\t地址:" +business.getAddress());
+        List<Movie> movies = ALL_MOVIES.get(loginUser);
+        if (movies.size() > 0) {
+            System.out.println("片名\t\t\t主演\t\t时长\t\t评分\t\t票价\t\t余票数量\t\t放映时间");
+            for (Movie movie : movies) {
+                System.out.println(movie.getName()+"\t\t\t"+movie.getActor()+"\t\t"+movie.getTime()+"\t\t"
+                        + movie.getScore()+"\t\t\t"+movie.getPrice()+"\t\t\t"+movie.getNumber()+"\t\t\t"+sdf.format(movie.getStartTime()));
+
+            }
+        }else{
+            System.out.println("您的店铺目前没有电影可以播放");
+        }
+
+
     }
 
     /**
